@@ -1,0 +1,25 @@
+# Node
+node_modules/
+.env
+*.env.*
+.next/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+
+# DB
+*.sqlite
+*.db
+*.db-journal
+
+# Vercel
+.vercel/
+
+# Misc
+*.local
