@@ -1,10 +1,1 @@
-{
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/ai-query/route": "app/api/ai-query/route.js",
-  "/api/chat-history/route": "app/api/chat-history/route.js",
-  "/page": "app/page.js",
-  "/login/page": "app/login/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/courses/[id]/learn/page": "app/courses/[id]/learn/page.js"
-}
+{}
