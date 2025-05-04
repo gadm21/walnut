@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 
 // Course details that match the home and browse pages
@@ -249,7 +248,6 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       
       <main className="flex-grow">
         {/* Course Header */}

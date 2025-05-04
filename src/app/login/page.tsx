@@ -19,20 +19,21 @@ export default function LoginPage() {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
+    const username = formData.get('username') as string;
     const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
 
     if (isLogin) {
       // Handle login
       try {
         const result = await signIn('credentials', {
           redirect: false,
-          email,
+          username,
           password,
         });
 
         if (result?.error) {
-          setError('Invalid email or password. Please try again.');
+          setError('Invalid username or password. Please try again.');
         } else {
           setSuccess('Login successful! Redirecting...');
           setTimeout(() => {
@@ -45,9 +46,35 @@ export default function LoginPage() {
         setIsLoading(false);
       }
     } else {
-      // Handle signup (placeholder for now)
-      setError('Signup functionality will be implemented soon.');
-      setIsLoading(false);
+      // Handle signup
+      if (!username || !password || !confirmPassword) {
+        setError('All fields are required.');
+        setIsLoading(false);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError('Passwords do not match.');
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error || 'Registration failed.');
+        } else {
+          setSuccess('Registration successful! You can now log in.');
+          setIsLogin(true);
+        }
+      } catch (err) {
+        setError('An error occurred during registration. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -57,7 +84,7 @@ export default function LoginPage() {
         <div className="bg-card rounded-xl border border-border/40 shadow-lg p-8">
           <div className="text-center mb-8">
             <Link href="/" className="inline-block">
-              <span className="text-primary font-bold text-2xl">EduNovai</span>
+              <span className="text-primary font-bold text-2xl">Walnut</span>
             </Link>
             <h1 className="text-2xl font-bold mt-6 mb-2">
               {isLogin ? 'Welcome back' : 'Create an account'}
@@ -70,30 +97,16 @@ export default function LoginPage() {
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            {!isLogin && (
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            )}
-
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">
-                Email Address
+              <label htmlFor="username" className="block text-sm font-medium mb-1">
+                Username
               </label>
               <input
-                type="email"
-                id="email"
-                name="email"
+                type="text"
+                id="username"
+                name="username"
                 className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Enter your email"
+                placeholder="Enter your username"
                 required
               />
             </div>
@@ -120,8 +133,10 @@ export default function LoginPage() {
                 <input
                   type="password"
                   id="confirmPassword"
+                  name="confirmPassword"
                   className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
                   placeholder="Confirm your password"
+                  required
                 />
               </div>
             )}

@@ -2,14 +2,34 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import VideoPlayer from '@/components/lms/VideoPlayer'
 import LessonContent from '@/components/lms/LessonContent'
 import ProgressTracker from '@/components/lms/ProgressTracker'
+import AiTutorChat from '@/components/lms/AiTutorChat'
+
+// Define module and course types to fix TypeScript errors
+type LessonType = {
+  id: string;
+  title: string;
+  duration: string;
+  type: 'video' | 'text' | 'quiz';
+  isCompleted: boolean;
+};
+
+type ModuleType = {
+  id: string;
+  title: string;
+  lessons: LessonType[];
+};
 
 // Sample course data
-const courseData = {
+const courseData: {
+  id: string;
+  title: string;
+  instructor: string;
+  modules: ModuleType[];
+} = {
   id: '1',
   title: 'Little Red Riding Hood: Analysis & Interpretation',
   instructor: 'Little Red',
@@ -131,7 +151,7 @@ const courseData = {
       ]
     }
   ]
-};
+} as const;
 
 // Sample lesson data
 const lessonData = {
@@ -188,7 +208,7 @@ const lessonData = {
     </div>
   `,
   isCompleted: false
-};
+} as const;
 
 export default function LearnPage() {
   const [overallProgress, setOverallProgress] = useState(12); // Percentage
@@ -200,7 +220,6 @@ export default function LearnPage() {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       
       <main className="flex-grow">
         <div className="container-custom py-8">
@@ -242,49 +261,7 @@ export default function LearnPage() {
                 />
                 
                 {/* AI Tutor */}
-                <div className="bg-card rounded-xl border border-border/40 p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                      <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
-                    </div>
-                    <h3 className="font-medium">AI Tutor Assistant</h3>
-                  </div>
-                  
-                  <div className="bg-secondary/30 rounded-lg p-4 mb-4">
-                    <p className="text-sm">
-                      I notice you're studying the historical context of Little Red Riding Hood. Would you like me to explain more about how the social conditions in 17th century France influenced Perrault's version?
-                    </p>
-                  </div>
-                  
-                  <div className="flex flex-col space-y-2">
-                    <button className="text-sm text-left px-4 py-2 rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-colors">
-                      Yes, tell me more about Perrault's social context
-                    </button>
-                    <button className="text-sm text-left px-4 py-2 rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-colors">
-                      How does this compare to the Brothers Grimm version?
-                    </button>
-                    <button className="text-sm text-left px-4 py-2 rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-colors">
-                      What are the key differences between versions?
-                    </button>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Ask your AI tutor a question..."
-                        className="w-full px-4 py-2 pr-10 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                      />
-                      <button className="absolute right-2 top-2 text-primary">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <AiTutorChat chatId={`${courseData.id}-${lessonData.id}`} />
               </div>
             </div>
           </div>

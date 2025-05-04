@@ -2,8 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+
+// Define cart item type to fix TypeScript errors
+type CartItemType = {
+  id: string;
+  title: string;
+  instructor: string;
+  price: number;
+  originalPrice?: number;
+  startingPrice?: number;
+  image?: string;
+  duration?: string;
+  level?: string;
+  category?: string;
+};
 
 export default function CheckoutPage() {
   const [formData, setFormData] = useState({
@@ -22,7 +35,7 @@ export default function CheckoutPage() {
   });
   
   const [step, setStep] = useState(1);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   
   // Load cart items from localStorage on component mount
   useEffect(() => {
@@ -87,7 +100,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+
       
       <main className="flex-grow py-12">
         <div className="container-custom">

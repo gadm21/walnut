@@ -14,7 +14,7 @@ export default function Header() {
     <header className="bg-background border-b border-border/40 px-6 py-3 sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="text-primary font-bold text-xl">
-          EduNovai
+          Walnut
         </Link>
         <nav className="flex items-center gap-4">
           {isAuthenticated ? (
@@ -33,7 +33,11 @@ export default function Header() {
               </Button>
             </div>
           ) : (
-            <></>
+            <Link href="/login">
+              <Button variant="default" size="sm">
+                Login
+              </Button>
+            </Link>
           )}
         </nav>
       </div>

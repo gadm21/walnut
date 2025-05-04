@@ -6,11 +6,21 @@ declare global {
   var prisma: PrismaClient | undefined
 }
 
-export const prisma =
-  global.prisma ||
-  new PrismaClient({
-    // Optional: Log database queries
-    // log: ['query'],
+// Add specific connection pool configuration for Supabase
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
+    // Configure connection pool to handle Supabase's connection limits
+    // This is important to prevent "prepared statement already exists" errors
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   })
+}
 
+export const prisma = global.prisma || prismaClientSingleton()
+
+// Use a single instance of Prisma Client in development
 if (process.env.NODE_ENV !== 'production') global.prisma = prisma

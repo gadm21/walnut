@@ -11,10 +11,10 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'EduNova | Modern Higher Education Platform',
+  title: 'Walnut | Modern Higher Education Platform',
   description: 'Discover innovative courses designed for the modern learner. Advance your career with our cutting-edge higher education platform.',
   keywords: 'education, online courses, higher education, learning platform, LMS',
-  authors: [{ name: 'EduNova Team' }],
+  authors: [{ name: 'Walnut Team' }],
 }
 
 export const viewport: Viewport = {

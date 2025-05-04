@@ -1221,6 +1221,9 @@ video {
 .h-\[1px\] {
   height: 1px;
 }
+.h-\[32rem\] {
+  height: 32rem;
+}
 .h-\[var\(--radix-navigation-menu-viewport-height\)\] {
   height: var(--radix-navigation-menu-viewport-height);
 }
@@ -1659,6 +1662,9 @@ video {
 .whitespace-nowrap {
   white-space: nowrap;
 }
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
 .break-words {
   overflow-wrap: break-word;
 }
@@ -1922,6 +1928,10 @@ video {
 .bg-white\/30 {
   background-color: rgb(255 255 255 / 0.3);
 }
+.bg-yellow-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 249 195 / var(--tw-bg-opacity, 1));
+}
 .bg-gradient-to-b {
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
 }
@@ -2082,6 +2092,9 @@ video {
 .pl-9 {
   padding-left: 2.25rem;
 }
+.pr-1 {
+  padding-right: 0.25rem;
+}
 .pr-10 {
   padding-right: 2.5rem;
 }
@@ -2120,6 +2133,9 @@ video {
 }
 .text-center {
   text-align: center;
+}
+.text-right {
+  text-align: right;
 }
 .align-middle {
   vertical-align: middle;
@@ -2293,6 +2309,10 @@ video {
 .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity, 1));
+}
+.text-yellow-800 {
+  --tw-text-opacity: 1;
+  color: rgb(133 77 14 / var(--tw-text-opacity, 1));
 }
 .line-through {
   text-decoration-line: line-through;
@@ -2662,9 +2682,6 @@ video {
 }
 .hover\:bg-secondary\/50:hover {
   background-color: hsl(var(--secondary) / 0.5);
-}
-.hover\:bg-secondary\/70:hover {
-  background-color: hsl(var(--secondary) / 0.7);
 }
 .hover\:bg-secondary\/80:hover {
   background-color: hsl(var(--secondary) / 0.8);

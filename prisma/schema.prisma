@@ -10,11 +10,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Add the User model below
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  passwordHash  String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  userId          Int          @id @default(autoincrement())
+  username        String       @unique
+  hashed_password String
+  max_file_size   Int?
+  files           File[]
+  fileVersions    FileVersion[]
+  sessions        Session[]
+  queries         Query[]
+
+  // Map to exact table name in Supabase
+  @@map("User")
+}
+
+model File {
+  fileId        Int          @id @default(autoincrement())
+  filename      String
+  userId        Int
+  path          String?
+  size          Int
+  uploaded_at   DateTime?
+  content       Bytes?
+  content_type  String?
+  user          User         @relation(fields: [userId], references: [userId])
+  fileVersions  FileVersion[]
+  metadata      FileMetadata[]
+
+  @@map("File")
+}
+
+model FileVersion {
+  versionId      Int      @id @default(autoincrement())
+  fileId         Int
+  userId         Int
+  content        Bytes
+  size           Int
+  version_number Int
+  created_at     DateTime
+  file           File     @relation(fields: [fileId], references: [fileId])
+  user           User     @relation(fields: [userId], references: [userId])
+
+  @@map("FileVersion")
+}
+
+model FileMetadata {
+  metadataId  Int      @id @default(autoincrement())
+  fileId      Int
+  key         String
+  value       String
+  created_at  DateTime
+  file        File     @relation(fields: [fileId], references: [fileId])
+
+  @@map("FileMetadata")
+}
+
+model Session {
+  sessionId  Int      @id @default(autoincrement())
+  userId     Int
+  token      String
+  expires_at DateTime
+  user       User     @relation(fields: [userId], references: [userId])
+
+  @@map("Session")
+}
+
+model Query {
+  queryId    Int      @id @default(autoincrement())
+  userId     Int
+  chatId     String?
+  query_text String
+  response   String?
+  created_at DateTime
+  user       User     @relation(fields: [userId], references: [userId])
+
+  @@map("Query")
 }

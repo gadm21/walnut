@@ -3,11 +3,24 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 
+// Define cart item type to fix TypeScript errors
+type CartItemType = {
+  id: string;
+  title: string;
+  instructor: string;
+  price: number;
+  originalPrice?: number;
+  startingPrice?: number;
+  image: string;
+  duration?: string;
+  level?: string;
+  category?: string;
+};
+
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   
   // Load cart items from localStorage on component mount
   useEffect(() => {
@@ -70,7 +83,7 @@ export default function CartPage() {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+
       
       <main className="flex-grow py-12">
         <div className="container-custom">
@@ -102,7 +115,7 @@ export default function CartPage() {
                           <div className="mt-2 sm:mt-0">
                             {item.startingPrice ? (
                               <div className="flex flex-col items-end">
-                                <span className="text-sm text-muted-foreground line-through">${item.originalPrice.toFixed(2)}</span>
+                                <span className="text-sm text-muted-foreground line-through">${item.originalPrice?.toFixed(2) || 0}</span>
                                 <span className="font-medium">${item.price.toFixed(2)}</span>
                               </div>
                             ) : (

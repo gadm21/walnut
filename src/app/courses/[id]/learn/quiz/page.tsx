@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import QuizComponent from '@/components/lms/QuizComponent'
 
@@ -83,7 +82,6 @@ export default function QuizPage() {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       
       <main className="flex-grow">
         <div className="container-custom py-8">

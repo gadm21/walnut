@@ -40,7 +40,7 @@ export default function Header() {
     }
   }, [])
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false)
     const section = document.getElementById(sectionId)
     if (section) {
@@ -53,13 +53,17 @@ export default function Header() {
       <div className="container-custom flex items-center justify-between h-16 md:h-20">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-primary font-bold text-2xl">EduNovai</span>
+          <span className="text-primary font-bold text-2xl">Walnut</span>
         </Link>
 
-        {/* Desktop Navigation - Only shown on home page */}
+        {/* Desktop Navigation */}
+        {isHomePage && (
+          <nav className="hidden md:flex items-center space-x-8">
+            {/* Add your navigation items here if needed */}
+          </nav>
+        )}
 
-
-        {/* Desktop Auth Buttons and Cart */}
+        {/* Desktop Auth Buttons and Cart - Always visible */}
         <div className="hidden md:flex items-center space-x-4">
           <Link href="/cart" className="relative p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
             <ShoppingCart className="h-6 w-6" />
@@ -74,25 +78,21 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button - Only shown on home page for navigation */}
-        {isHomePage ? (
-          <button
-            className="md:hidden p-2 rounded-md"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
-        ) : (
-          <div className="md:hidden"></div> // Empty div to maintain layout on other pages
-        )}
+        {/* Mobile Menu Button - Always shown */}
+        <button
+          className="md:hidden p-2 rounded-md"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
       </div>
 
-      {/* Mobile Menu - Only shown on home page */}
-      {isHomePage && isMenuOpen && (
+      {/* Mobile Menu - Always shown when menu is open */}
+      {isMenuOpen && (
         <div className="md:hidden glass-effect">
           <div className="container-custom py-4 space-y-4">
             <div className="flex flex-col space-y-3 pt-4 border-t border-border/40">

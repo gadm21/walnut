@@ -6,6 +6,10 @@ import Footer from '@/components/layout/Footer'
 import { useSession } from 'next-auth/react';
 
 export default function DashboardPage() {
+  // State for notification preferences
+  const [courseUpdates, setCourseUpdates] = useState(true);
+  const [newCourses, setNewCourses] = useState(true);
+  const [promotions, setPromotions] = useState(false);
   const { data: session } = useSession();
   const [showCourseDetails, setShowCourseDetails] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
@@ -237,6 +241,7 @@ export default function DashboardPage() {
                         type="text"
                         id="name"
                         value="Test User"
+                        readOnly
                         className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
                       />
                     </div>
@@ -249,6 +254,7 @@ export default function DashboardPage() {
                         type="email"
                         id="email"
                         value={session?.user?.email || 'test@example.com'}
+                        readOnly
                         className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
                       />
                     </div>
@@ -282,7 +288,12 @@ export default function DashboardPage() {
                         <p className="text-sm text-muted-foreground">Receive notifications about course updates and new content</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" checked className="sr-only peer" />
+                        <input 
+    type="checkbox" 
+    checked={courseUpdates} 
+    onChange={(e) => setCourseUpdates(e.target.checked)} 
+    className="sr-only peer" 
+  />
                         <div className="w-11 h-6 bg-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     </div>
@@ -293,7 +304,12 @@ export default function DashboardPage() {
                         <p className="text-sm text-muted-foreground">Receive notifications about new course releases</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" checked className="sr-only peer" />
+                        <input 
+    type="checkbox" 
+    checked={courseUpdates} 
+    onChange={(e) => setCourseUpdates(e.target.checked)} 
+    className="sr-only peer" 
+  />
                         <div className="w-11 h-6 bg-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     </div>
@@ -304,13 +320,24 @@ export default function DashboardPage() {
                         <p className="text-sm text-muted-foreground">Receive notifications about discounts and special offers</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" className="sr-only peer" />
+                        <input 
+                          type="checkbox" 
+                          checked={promotions} 
+                          onChange={(e) => setPromotions(e.target.checked)} 
+                          className="sr-only peer" 
+                        />
                         <div className="w-11 h-6 bg-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     </div>
                     
                     <div className="pt-4">
-                      <button className="btn-primary">
+                      <button 
+                        className="btn-primary"
+                        onClick={() => {
+                          // Here you would typically save these preferences to your backend
+                          console.log('Saving preferences:', { courseUpdates, newCourses, promotions });
+                        }}
+                      >
                         Save Preferences
                       </button>
                     </div>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CourseCard from '@/components/course/CourseCard'
 
@@ -95,7 +94,6 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       
       <main className="flex-grow">
         {/* Page Header */}

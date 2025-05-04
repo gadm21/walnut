@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import HeroSection from '@/components/layout/HeroSection'
 
@@ -54,8 +53,6 @@ export default function Home() {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      
       <main className="flex-grow">
         {/* Hero Section */}
         <HeroSection 
@@ -373,7 +370,7 @@ export default function Home() {
                 Join thousands of students who are already benefiting from our AI-powered courses and personalized learning approach. Start your journey today and learn at your own pace with guidance from our intelligent AI tutors.
               </p>
               <div className="flex justify-center">
-                <button onClick={() => document.getElementById('courses').scrollIntoView({ behavior: 'smooth' })} className="btn-primary">
+                <button onClick={() => { const element = document.getElementById('courses'); if (element) element.scrollIntoView({ behavior: 'smooth' }); }} className="btn-primary">
                   Explore Courses
                 </button>
               </div>
