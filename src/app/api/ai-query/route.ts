@@ -13,7 +13,7 @@ const PRIMARY_BACKEND_URL = BACKEND_URLS[0];
 
 interface QueryBody {
   query: string;
-  chatId?: string;
+  chatId: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -24,10 +24,30 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json() as QueryBody;
+    const originalBody = await req.json() as QueryBody;
+
+    // Validate that query and chatId are present from the client calling /api/ai-query
+    if (!originalBody.query) {
+      return NextResponse.json({ detail: "Query is required in the request body" }, { status: 400 });
+    }
+    if (typeof originalBody.query !== 'string') {
+      return NextResponse.json({ detail: "Query must be a string" }, { status: 400 });
+    }
+    if (!originalBody.chatId) {
+      return NextResponse.json({ detail: "Chat ID is required in the request body" }, { status: 400 });
+    }
+    if (typeof originalBody.chatId !== 'string') {
+      return NextResponse.json({ detail: "Chat ID must be a string" }, { status: 400 });
+    }
+
+    // Construct the payload for the external AI service with only minimal fields
+    const aiServicePayload = {
+      query: originalBody.query,
+      chatId: originalBody.chatId
+    };
     
     // Debug session information
-    console.log('AI Query - Using local agent - Session data:', {
+    console.log('AI Query - Session data:', {
       user: session.user,
       id: (session.user as any)?.id,
       userId: (session.user as any)?.userId,
@@ -53,7 +73,7 @@ export async function POST(req: NextRequest) {
     
     try {
       // Send query to remote backend AI service
-      console.log(`Sending query to ${PRIMARY_BACKEND_URL}:`, body);
+      console.log(`Sending query to ${PRIMARY_BACKEND_URL}:`, aiServicePayload);
       
       try {
         // Get the accessToken from the session (populated via NextAuth callbacks)
@@ -66,7 +86,7 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify(aiServicePayload),
           // Allow longer timeout for AI processing
           signal: AbortSignal.timeout(30000), // 30 second timeout
         });
@@ -107,7 +127,7 @@ export async function POST(req: NextRequest) {
                 "Content-Type": "application/json",
                 ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
               },
-              body: JSON.stringify(body),
+              body: JSON.stringify(aiServicePayload),
               signal: AbortSignal.timeout(30000),
             });
             
@@ -151,7 +171,7 @@ Error details: ${primaryError instanceof Error ? primaryError.message : 'Unknown
     try {
       await query(
         'INSERT INTO "Query" ("userId", "chatId", query_text, response, created_at) VALUES ($1, $2, $3, $4, $5)',
-        [userId, body.chatId || null, body.query, responseData.response, new Date()]
+        [userId, aiServicePayload.chatId, aiServicePayload.query, responseData.response, new Date()]
       );
     } catch (dbError) {
       console.error('Database error saving query:', dbError);
