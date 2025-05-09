@@ -1,1 +1,13 @@
-{}
+{
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/ai-query/route": "app/api/ai-query/route.js",
+  "/api/chat-history/route": "app/api/chat-history/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/courses/page": "app/courses/page.js",
+  "/page": "app/page.js",
+  "/courses/[id]/page": "app/courses/[id]/page.js",
+  "/login/page": "app/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/courses/[id]/learn/page": "app/courses/[id]/learn/page.js"
+}
