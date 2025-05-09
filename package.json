@@ -2,10 +2,6 @@
   "name": "edu-lms-app",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    ".",
-    "worker"
-  ],
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
