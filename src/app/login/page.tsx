@@ -12,6 +12,21 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Define types for API response
+  interface RegisterSuccessResponse {
+    id: string;
+    username: string;
+  }
+
+  interface ErrorResponse {
+    error: string;
+  }
+
+  // Type guard to check if the response is an error
+  function isErrorResponse(response: any): response is ErrorResponse {
+    return typeof response === 'object' && response !== null && 'error' in response;
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -22,6 +37,13 @@ export default function LoginPage() {
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
+    let countryCode: string | undefined, phone: string | undefined, role: string | undefined;
+
+    if (!isLogin) {
+      countryCode = formData.get('countryCode') as string;
+      phone = formData.get('phoneNumber') as string;
+      role = formData.get('role') as string;
+    }
 
     if (isLogin) {
       // Handle login
@@ -47,8 +69,8 @@ export default function LoginPage() {
       }
     } else {
       // Handle signup
-      if (!username || !password || !confirmPassword) {
-        setError('All fields are required.');
+      if (!username || !password || !confirmPassword || !role) { 
+        setError('All fields except phone number are required.');
         setIsLoading(false);
         return;
       }
@@ -57,15 +79,36 @@ export default function LoginPage() {
         setIsLoading(false);
         return;
       }
+
+      let fullPhoneNumber: string | undefined = undefined;
+      if (countryCode && phone) {
+        const numericCountryCode = countryCode.replace(/\D/g, '');
+        const numericPhone = phone.replace(/\D/g, '');
+        if (numericCountryCode && numericPhone) {
+          fullPhoneNumber = `+${numericCountryCode}${numericPhone}`;
+        }
+      }
+      
+      const roleInt = parseInt(role as string, 10);
+      if (isNaN(roleInt)) {
+        setError('Invalid role selected.');
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ username, password, phoneNumber: fullPhoneNumber, role: roleInt }),
         });
-        const data = await res.json();
+        const data: RegisterSuccessResponse | ErrorResponse = await res.json();
         if (!res.ok) {
-          setError(data.error || 'Registration failed.');
+          if (isErrorResponse(data)) {
+            setError(data.error || 'Registration failed.');
+          } else {
+            setError('Registration failed with an unknown error structure.');
+          }
         } else {
           setSuccess('Registration successful! You can now log in.');
           setIsLogin(true);
@@ -126,19 +169,68 @@ export default function LoginPage() {
             </div>
 
             {!isLogin && (
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="Confirm your password"
-                  required
-                />
-              </div>
+              <>
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
+
+                {/* Phone Number Inputs */}
+                <div className="flex space-x-2 mt-4">
+                  <div className="w-1/4">
+                    <label htmlFor="countryCode" className="block text-sm font-medium mb-1">
+                      Ext.
+                    </label>
+                    <input
+                      type="text"
+                      id="countryCode"
+                      name="countryCode"
+                      className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="+1"
+                    />
+                  </div>
+                  <div className="w-3/4">
+                    <label htmlFor="phoneNumber" className="block text-sm font-medium mb-1">
+                      Phone (Optional)
+                    </label>
+                    <input
+                      type="tel"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="e.g., 5551234567"
+                    />
+                  </div>
+                </div>
+
+                {/* Role Dropdown */}
+                <div className="mt-4">
+                  <label htmlFor="role" className="block text-sm font-medium mb-1">
+                    Role
+                  </label>
+                  <select
+                    id="role"
+                    name="role"
+                    className="w-full px-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/50 bg-card text-foreground"
+                    required
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Select your role</option>
+                    <option value="1">Student</option>
+                    <option value="2">Admin</option>
+                    <option value="3">Educator</option>
+                  </select>
+                </div>
+              </>
             )}
 
             {isLogin && (

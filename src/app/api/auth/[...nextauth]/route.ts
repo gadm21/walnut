@@ -11,6 +11,8 @@ type UserType = {
   username: string;
   hashed_password: string;
   max_file_size?: number;
+  role?: number;
+  phone_number?: string | null;
 };
 
 export const authOptions: NextAuthOptions = {
@@ -28,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         
         // Use direct PostgreSQL connection for user lookup
         const user = await queryOne<UserType>(
-          'SELECT "userId", username, hashed_password, max_file_size FROM "User" WHERE username = $1 LIMIT 1',
+          'SELECT "userId", username, hashed_password, max_file_size, role, phone_number FROM "User" WHERE username = $1 LIMIT 1',
           [credentials.username]
         );
         
@@ -77,7 +79,13 @@ export const authOptions: NextAuthOptions = {
           console.error("[NextAuth] Failed to fetch FastAPI token", e);
         }
 
-        return { id: String(user.userId), username: user.username, accessToken };
+        return {
+          id: String(user.userId),
+          username: user.username,
+          accessToken,
+          role: user.role,
+          phoneNumber: user.phone_number,
+        };
       },
     }),
   ],
@@ -90,6 +98,8 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = (user as any).accessToken;
         token.id = user.id; // Pass user ID to the token
         token.username = (user as any).username;
+        token.role = (user as any).role;
+        token.phoneNumber = (user as any).phoneNumber;
       }
       return token;
     },
@@ -98,6 +108,8 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).accessToken = token.accessToken as string | undefined;
         (session.user as any).id = token.id; // Pass user ID to the session
         (session.user as any).username = token.username; // Pass username to the session
+        (session.user as any).role = token.role;
+        (session.user as any).phoneNumber = token.phoneNumber;
       }
       return session;
     },

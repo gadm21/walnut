@@ -6,6 +6,8 @@ interface RegisterRequestBody {
   username?: string;
   password?: string;
   max_file_size?: number;
+  phoneNumber?: string;
+  role?: number;
 }
 
 export async function POST(req: NextRequest) {
@@ -14,9 +16,11 @@ export async function POST(req: NextRequest) {
     const username = body.username || '';
     const password = body.password || '';
     const max_file_size = body.max_file_size || 10485760; // Default 10MB
+    const phoneNumber = body.phoneNumber; // Optional
+    const role = body.role; // Required from frontend
     
-    if (!username || !password) {
-      return NextResponse.json({ error: "Username and password are required" }, { status: 400 });
+    if (!username || !password || typeof role === 'undefined') {
+      return NextResponse.json({ error: "Username, password, and role are required" }, { status: 400 });
     }
     
     // Check if username exists using direct PostgreSQL connection
@@ -29,14 +33,25 @@ export async function POST(req: NextRequest) {
     if (existingUser) {
       return NextResponse.json({ error: "Username already exists" }, { status: 409 });
     }
+
+    // Check if phone number exists if provided
+    if (phoneNumber) {
+      const existingUserByPhone = await queryOne(
+        'SELECT "userId" FROM "User" WHERE phone_number = $1 LIMIT 1',
+        [phoneNumber]
+      );
+      if (existingUserByPhone) {
+        return NextResponse.json({ error: "Phone number already registered" }, { status: 409 });
+      }
+    }
     
     // Hash password
     const hashed_password = await hash(password, 10);
     
     // Insert the new user using direct PostgreSQL connection
     const result = await query(
-      'INSERT INTO "User" (username, hashed_password, max_file_size) VALUES ($1, $2, $3) RETURNING "userId", username',
-      [username, hashed_password, max_file_size]
+      'INSERT INTO "User" (username, hashed_password, max_file_size, phone_number, role) VALUES ($1, $2, $3, $4, $5) RETURNING "userId", username',
+      [username, hashed_password, max_file_size, phoneNumber, role]
     );
     
     // Extract the created user from the result

@@ -40,6 +40,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ detail: "Chat ID must be a string" }, { status: 400 });
     }
 
+    // get page content
+
     // Construct the payload for the external AI service with only minimal fields
     const aiServicePayload = {
       query: originalBody.query,
