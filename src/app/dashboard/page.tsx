@@ -30,8 +30,28 @@ export default function DashboardPage() {
   ];
   
   useEffect(() => {
-    if (status === 'authenticated' && session?.user?.role === 2) {
-      router.push('/admin/users');
+    console.log("DASHBOARD PAGE - Session Status:", status);
+    console.log("DASHBOARD PAGE - Session Object:", JSON.stringify(session, null, 2)); // Log the whole session object
+
+    if (status === 'authenticated' && session?.user) {
+      console.log("DASHBOARD PAGE - User Role Raw:", session.user.role);
+      console.log("DASHBOARD PAGE - User Role Type:", typeof session.user.role);
+      // Ensure role is treated as a number for comparison
+      const userRole = Number(session.user.role);
+      console.log("DASHBOARD PAGE - User Role (as number):", userRole);
+
+      if (userRole === 2) {
+        console.log("DASHBOARD PAGE - Admin detected (role is 2), redirecting to /admin/users");
+        router.push('/admin/users');
+      } else {
+        console.log(`DASHBOARD PAGE - Not an admin or role is not 2. Actual role: ${userRole}`);
+      }
+    } else if (status === 'unauthenticated') {
+      console.log("DASHBOARD PAGE - User is unauthenticated.");
+      // Optionally, redirect to login if not handled by middleware
+      // router.push('/signin');
+    } else if (status === 'loading'){
+      console.log("DASHBOARD PAGE - Session is loading...");
     }
   }, [session, status, router]);
 
@@ -59,7 +79,7 @@ export default function DashboardPage() {
   
   // Render Student Dashboard for non-admin authenticated users
   // Or if session is still resolving but not yet 'authenticated' with role 2
-  if (status === 'authenticated' && session?.user?.role !== 2) {
+  if (status === 'authenticated' && session?.user?.role !== 2 && Number(session?.user?.role) !== 2) { // Added Number() check here too for safety
     // Existing Student Dashboard JSX starts here
     return (
       <div className="min-h-screen flex flex-col">
@@ -468,7 +488,7 @@ export default function DashboardPage() {
   // For now, rendering null or a simple message if none of the above conditions are met.
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-      <p>Verifying session...</p>
+      <p>Verifying session and role...</p>
     </div>
   );
 
