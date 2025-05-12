@@ -16,7 +16,7 @@ interface ApiError {
   detail: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7050';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7050').replace(/\/$/, '');
 
 export default function AdminUsersPage() {
   const { data: session, status } = useSession();
